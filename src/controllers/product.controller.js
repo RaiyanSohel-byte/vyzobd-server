@@ -19,7 +19,10 @@ const createProduct = async (req, res) => {
 
 const getProducts = async (req, res) => {
   try {
-    const products = await Product.find();
+    const products = await Product.find().populate(
+      "category",
+      "name slug image",
+    );
 
     res.status(200).json({
       success: true,

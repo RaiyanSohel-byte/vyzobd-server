@@ -2,6 +2,8 @@ const express = require("express");
 
 const router = express.Router();
 
+const protect = require("../middlewares/authMiddleware");
+
 const admin = require("../middlewares/adminMiddleware");
 const {
   createCategory,
@@ -11,7 +13,7 @@ const {
   deleteCategory,
 } = require("../controllers/category.controller");
 
-router.post("/", admin, createCategory);
+router.post("/", protect, admin, createCategory);
 
 router.get("/", getCategories);
 

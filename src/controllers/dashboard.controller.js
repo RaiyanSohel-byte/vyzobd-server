@@ -10,12 +10,11 @@ const getDashboardStats = async (req, res) => {
 
     const totalOrders = await Order.countDocuments();
 
-    const orders = await Order.find();
+    const orders = await Order.find({
+      paymentStatus: "Paid",
+    });
 
-    const totalRevenue = orders.reduce(
-      (sum, order) => sum + order.totalPrice,
-      0,
-    );
+    const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
 
     const recentOrders = await Order.find()
       .populate("user", "name")
@@ -25,18 +24,17 @@ const getDashboardStats = async (req, res) => {
     const now = new Date();
 
     const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
-
     const monthlyOrders = await Order.find({
+      paymentStatus: "Paid",
       createdAt: {
         $gte: firstDay,
       },
     });
 
     const monthlySales = monthlyOrders.reduce(
-      (sum, order) => sum + order.totalPrice,
+      (sum, order) => sum + order.total,
       0,
     );
-
     const monthlyTarget = 150000;
 
     const percentage = Math.round((monthlySales / monthlyTarget) * 100);

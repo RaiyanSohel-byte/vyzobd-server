@@ -2,7 +2,29 @@ const Category = require("../models/category.model");
 
 const createCategory = async (req, res) => {
   try {
-    const category = await Category.create(req.body);
+    const { name, image } = req.body;
+
+    const slug = name
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
+
+    // Check duplicate slug
+    const exists = await Category.findOne({ slug });
+
+    if (exists) {
+      return res.status(400).json({
+        success: false,
+        message: "Category already exists",
+      });
+    }
+
+    const category = await Category.create({
+      name,
+      slug,
+      image: image || "https://placehold.co/600x600?text=Category",
+    });
 
     res.status(201).json({
       success: true,
@@ -10,13 +32,14 @@ const createCategory = async (req, res) => {
       data: category,
     });
   } catch (error) {
+    console.log(error);
+
     res.status(500).json({
       success: false,
       message: error.message,
     });
   }
 };
-
 const getCategories = async (req, res) => {
   try {
     const categories = await Category.find();
