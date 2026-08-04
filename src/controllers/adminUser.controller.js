@@ -1,4 +1,5 @@
 const User = require("../models/user.model");
+const Order = require("../models/order.model");
 
 const getAllUsers = async (req, res) => {
   try {
@@ -114,6 +115,25 @@ const getAllUsers = async (req, res) => {
       .skip((page - 1) * limit)
       .limit(limit);
 
+    const usersWithStats = await Promise.all(
+      users.map(async (user) => {
+        const orders = await Order.find({ user: user._id });
+
+        const ordersCount = orders.length;
+
+        const totalSpent = orders.reduce(
+          (sum, order) => sum + (order.total || 0),
+          0,
+        );
+
+        return {
+          ...user.toObject(),
+          ordersCount,
+          totalSpent,
+        };
+      }),
+    );
+
     res.status(200).json({
       success: true,
 
@@ -133,7 +153,7 @@ const getAllUsers = async (req, res) => {
         sort,
       },
 
-      users,
+      users: usersWithStats,
     });
   } catch (error) {
     res.status(500).json({

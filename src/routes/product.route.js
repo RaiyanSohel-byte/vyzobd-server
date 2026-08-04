@@ -12,16 +12,15 @@ const {
   getProduct,
   updateProduct,
   deleteProduct,
-} = require("../controllers/ product.controller");
+} = require("../controllers/product.controller");
 
-router.post("/", createProduct);
-
+//user
 router.get("/", getProducts);
-
 router.get("/:id", getProduct);
 
-router.put("/:id", updateProduct);
-
-router.delete("/:id", deleteProduct);
+//admin
+router.post("/", protect, admin, createProduct);
+router.put("/:id", protect, admin, updateProduct);
+router.delete("/:id", protect, admin, deleteProduct);
 
 module.exports = router;

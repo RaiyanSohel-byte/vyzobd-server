@@ -29,6 +29,7 @@ const authRoutes = require("./routes/auth.route");
 const userRoutes = require("./routes/user.route");
 const orderRoutes = require("./routes/order.route");
 const adminUserRoutes = require("./routes/adminUser.route");
+const dashboardRoutes = require("./routes/dashboard.route");
 
 app.use("/api/admin", adminUserRoutes);
 app.use("/api/products", productRoutes);
@@ -37,6 +38,7 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 app.get("/", (req, res) => {
   res.send("API Running...");

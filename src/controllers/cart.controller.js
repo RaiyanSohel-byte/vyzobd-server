@@ -1,5 +1,5 @@
 const Cart = require("../models/cart.model");
-const Product = require("../models/ product.model");
+const Product = require("../models/product.model");
 
 const getCart = async (req, res) => {
   try {
@@ -31,7 +31,7 @@ const getCart = async (req, res) => {
 
 const addToCart = async (req, res) => {
   try {
-    const { productId, quantity, color, size } = req.body;
+    const { productId, quantity } = req.body;
 
     const product = await Product.findById(productId);
 
@@ -52,10 +52,7 @@ const addToCart = async (req, res) => {
     }
 
     const existingItem = cart.items.find(
-      (item) =>
-        item.product.toString() === productId &&
-        item.color === color &&
-        item.size === size,
+      (item) => item.product.toString() === productId,
     );
 
     if (existingItem) {
@@ -64,8 +61,6 @@ const addToCart = async (req, res) => {
       cart.items.push({
         product: productId,
         quantity: quantity || 1,
-        color,
-        size,
       });
     }
 
@@ -88,7 +83,7 @@ const addToCart = async (req, res) => {
 
 const updateCartItem = async (req, res) => {
   try {
-    const { productId, quantity, color, size } = req.body;
+    const { productId, quantity } = req.body;
 
     const cart = await Cart.findOne({ user: req.user._id });
 
@@ -100,10 +95,7 @@ const updateCartItem = async (req, res) => {
     }
 
     const item = cart.items.find(
-      (item) =>
-        item.product.toString() === productId &&
-        item.color === color &&
-        item.size === size,
+      (item) => item.product.toString() === productId,
     );
 
     if (!item) {
@@ -134,7 +126,7 @@ const updateCartItem = async (req, res) => {
 
 const removeCartItem = async (req, res) => {
   try {
-    const { productId, color, size } = req.body;
+    const { productId } = req.body;
 
     const cart = await Cart.findOne({ user: req.user._id });
 
@@ -146,12 +138,7 @@ const removeCartItem = async (req, res) => {
     }
 
     cart.items = cart.items.filter(
-      (item) =>
-        !(
-          item.product.toString() === productId &&
-          item.color === color &&
-          item.size === size
-        ),
+      (item) => !(item.product.toString() === productId),
     );
 
     await cart.save();

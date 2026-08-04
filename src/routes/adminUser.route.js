@@ -12,7 +12,7 @@ const {
   deleteUser,
 } = require("../controllers/adminUser.controller");
 
-router.get("/users", getAllUsers);
+router.get("/users", protect, admin, getAllUsers);
 
 router.get("/users/:id", protect, admin, getUserById);
 
