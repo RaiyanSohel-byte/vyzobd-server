@@ -2,7 +2,12 @@ const Product = require("../models/product.model");
 
 const createProduct = async (req, res) => {
   try {
-    const product = await Product.create(req.body);
+    const imageUrls = req.files ? req.files.map((file) => file.path) : [];
+
+    const product = await Product.create({
+      ...req.body,
+      images: imageUrls,
+    });
 
     res.status(201).json({
       success: true,
@@ -62,7 +67,16 @@ const getProduct = async (req, res) => {
 
 const updateProduct = async (req, res) => {
   try {
-    const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
+    const updateData = {
+      ...req.body,
+    };
+
+    // Only update images if new ones are uploaded
+    if (req.files && req.files.length > 0) {
+      updateData.images = req.files.map((file) => file.path);
+    }
+
+    const product = await Product.findByIdAndUpdate(req.params.id, updateData, {
       new: true,
       runValidators: true,
     });
